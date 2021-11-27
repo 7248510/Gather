@@ -1,27 +1,27 @@
-﻿using System;
-using System.Net;
-using System.IO; //File
-using System.Linq; //Readlines
-namespace carbonClient
+using System;
+using System.IO;
+using System.Linq;
+using System.Net; //File
+
+namespace Gather
 {
-    class promptUser
+    internal class PromptUser
     {
-        public string welcome = "Gather will download images from txt files.";
-        public string welcome2 = "By default this will create three folders one main and two sub folders";
-        public string warning = "You need to change the directory. I am testing this on my Desktop";
-        public string warning2 = "If the folder is not created gatherRoot will be created with two blank url files";
+        public readonly string Welcome = "Gather will download images from txt files.";
+        public readonly string Welcome2 = "By default this will create three folders one main and two sub folders";
     }
 
-    class gather
+    internal static class Gather
     {
-        public static void createDirectory()
+        public static void CreateDirectory()
         {
-            //For testing purposes this defaults to the desktop
+            string path = Directory.GetCurrentDirectory();
+            Console.WriteLine("The current directory is {0}", path);
+            var currentDirectoryPath = path + "\\gatherRoot";
             Console.WriteLine("Creating the folder gatherRoot");
-            var root = @"C:\users\Caleb\Desktop\gatherRoot";
-            System.IO.Directory.CreateDirectory(root);      
-            string category0Folder = @"C:\users\Caleb\Desktop\gatherRoot\category0"; //Sub folder
-            string category1Folder = @"C:\users\Caleb\Desktop\gatherRoot\category1"; //subfolder
+            System.IO.Directory.CreateDirectory(currentDirectoryPath);
+            var category0Folder = currentDirectoryPath + "\\category0";
+            var category1Folder = currentDirectoryPath + "\\category1";
             if (!System.IO.File.Exists(category0Folder))
             {
                 System.IO.Directory.CreateDirectory(category0Folder);
@@ -39,29 +39,31 @@ namespace carbonClient
                 Console.WriteLine("Folder already exists");
             }
         }
-        public static int url()
+        public static int Url()
         {
             try
             {
-                string folderName = @"C:\users\Caleb\Desktop\gatherRoot"; //Root folder
-                var category0FileName = @"C:\users\Caleb\Desktop\gatherRoot\category0\category0.txt"; //Url list location
-                var category1FileName = @"C:\users\Caleb\Desktop\gatherRoot\category1\category1.txt"; //Url list location
+                //Instead of relying on the users Desktop use the current location of the executable
+                string path = Directory.GetCurrentDirectory();
+                Console.WriteLine("The current directory is {0}", path);
+                var currentDirectoryPath = path + "\\gatherRoot";
+                Console.WriteLine(currentDirectoryPath);
+                string folderName = currentDirectoryPath;
+                var category0FileName = currentDirectoryPath + "\\category0\\category0.txt";
+                var category1FileName = currentDirectoryPath + "\\category1\\category1.txt";
+                
                 if (!System.IO.File.Exists(category0FileName))
                 {
-                    using (System.IO.FileStream fs = System.IO.File.Create(category0FileName))
-                    {
-                        Console.WriteLine("0: File created. This file will be blank");
-                    }
+                    using System.IO.FileStream fs = System.IO.File.Create(category0FileName);
+                    Console.WriteLine("0: File created. This file will be blank");
                 }
                 else {
                         Console.WriteLine("0: File already exists");
                 }
                 if (!System.IO.File.Exists(category1FileName))
                 {
-                    using (System.IO.FileStream fs = System.IO.File.Create(category1FileName))
-                    {
-                        Console.WriteLine("1: File created. This file will be blank");
-                    }
+                    using System.IO.FileStream fs = System.IO.File.Create(category1FileName);
+                    Console.WriteLine("1: File created. This file will be blank");
                 }
                 else
                 {
@@ -76,7 +78,7 @@ namespace carbonClient
                 WebClient myWebClient = new WebClient();
                 if (category0Count >= 1)
                 {
-                    int fileNumber = 0;
+                    var fileNumber = 0;
                     foreach (string line in File.ReadLines(category0FileName))
                     {
                         string pathString = System.IO.Path.Combine(folderName, "category0");
@@ -94,13 +96,11 @@ namespace carbonClient
 
                 if (category1Count >= 1)
                 {
-                    int fileNumber = 0;
+                    var fileNumber = 0;
                     foreach (string line in File.ReadLines(category1FileName))
                     {                      
                         string pathString = System.IO.Path.Combine(folderName, "category1");
                         var writeMe = pathString + "/" +fileNumber +".jpg";
-                        //Console.WriteLine("URL DOWNLOAD: " + line);
-                        //Console.WriteLine("File name: "+ writeMe);
                         myWebClient.DownloadFile(line, writeMe);
                         fileNumber++;
                     }
@@ -113,8 +113,9 @@ namespace carbonClient
             }
             catch (FileNotFoundException error)
             {
-                Console.WriteLine("Exception occured. File containing urls not found.");
+                Console.WriteLine("Exception occured.");
                 Console.WriteLine("Cannot gather URLS");
+                Console.WriteLine("Error code" + error);
                 return 1;
             }
         }

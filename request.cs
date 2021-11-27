@@ -1,29 +1,22 @@
-﻿using System;
+using System;
 
-
-namespace carbonClient
+namespace Gather
 {
-    class request
+    internal static class Request
     {
-        static void prompt()
+        private static void Prompt()
         {
-            promptUser setup = new promptUser(); //Spawn an instance
-            Console.WriteLine(setup.welcome);
-            Console.WriteLine(setup.welcome2);
+            PromptUser setup = new PromptUser(); //Spawn an instance
+            Console.WriteLine(setup.Welcome);
+            Console.WriteLine(setup.Welcome2);
         }
 
-        static void Main()
+        private static void Main()
         {
-            prompt();
-            gather.createDirectory(); //Create the root directory
-            int trackingVal = gather.url();
-            if (trackingVal == 0)
-            { 
-                Console.WriteLine("Program succesfully executed.");
-            }
-            else { 
-                Console.WriteLine("Program failed.");
-            }
+            Prompt();
+            Gather.CreateDirectory(); //Create the root directory
+            var trackingVal = Gather.Url();
+            Console.WriteLine(trackingVal == 0 ? "Program successfully executed." : "Program failed.");
         }
     }
 }
